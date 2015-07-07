@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-本包对常见的短信发送功能进行了抽象，包含了短信发送这一功能实现过程中需要用到类，使得具体实现某一短信平台的短信发送功能异常简单。
+本包对常见的短信发送功能进行了抽象，包含了短信发送这一功能实现过程中需要用到的类，使得具体实现某一平台的短信发送功能异常简单。
 
 ## 安装
 
