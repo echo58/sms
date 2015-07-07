@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-本包对常见的短信发送功能进行了抽象，包含了短信发送这一功能实现过程中需要用到类，使得具体实现某一具体短信平台的短信发送功能异常简单。
+本包对常见的短信发送功能进行了抽象，包含了短信发送这一功能实现过程中需要用到类，使得具体实现某一短信平台的短信发送功能异常简单。
 
 ## 安装
 
@@ -36,12 +36,16 @@ $provider = new Huying\Sms\<ProvioderName>([
     'appId' => 'xxxxxx',
 ]);
 ```
-实例化时需要传给构造函数的参数在不同短信平台一般是不一样的，具体请见相应平台的包。
+实例化时需要传给构造函数的参数在不同短信平台下一般是不一样的，具体请见相应平台的包。
 
 ### 直接发送短信
 
 ```php
-$message = Message::create()->setRecipient('18800000000')->setBody('我是短信内容')->using($provider)->send();
+$message = Message::create()
+    ->setRecipient('18800000000')
+    ->setBody('我是短信内容')
+    ->using($provider)
+    ->send();
 ```
 
 ### 判断短信是否发送成功
@@ -50,8 +54,10 @@ $message = Message::create()->setRecipient('18800000000')->setBody('我是短信
 if ($message->getStatus() == Huying\Sms\MessageStatus::STATUS_SENT) {
     echo '发送成功';
 } else {
-    echo '发送失败:错误码'.$message->getError()->getCode().',错误消息:'.$message->getError()->getMessage();
+    echo '发送失败:错误码'.$message->getError()->getCode()
+        .',错误消息:'.$message->getError()->getMessage();
 }
+```
 
 ### 短信池
 
