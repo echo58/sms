@@ -41,6 +41,25 @@ class AbstractProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($httpClient, $provider->getHttpClient());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSendWithIncompleteMessage()
+    {
+        $provider = new FakeProvider([
+            'accountSid' => '123',
+            'authToken' => '456',
+        ]);
+        $messageStub = $this->getMockBuilder('Huying\Sms\Message')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $messageStub->method('toArray')
+            ->willReturn([
+                'recipients' => ['123'],
+            ]);
+        $provider->send($messageStub);
+    }
+
     public function testSend()
     {
         $mock = new MockHandler([
@@ -58,6 +77,11 @@ class AbstractProviderTest extends \PHPUnit_Framework_TestCase
         $messageStub = $this->getMockBuilder('Huying\Sms\Message')
             ->disableOriginalConstructor()
             ->getMock();
+        $messageStub->method('toArray')
+            ->willReturn([
+                'recipients' => ['123'],
+                'content' => '132',
+            ]);
         $messageStub->expects($this->once())
             ->method('setHttpRequest');
 
@@ -81,6 +105,11 @@ class AbstractProviderTest extends \PHPUnit_Framework_TestCase
         $messageStub = $this->getMockBuilder('Huying\Sms\Message')
             ->disableOriginalConstructor()
             ->getMock();
+        $messageStub->method('toArray')
+            ->willReturn([
+                'recipients' => ['123'],
+                'content' => '132',
+            ]);
 
         $provider->send($messageStub);
     }
@@ -103,6 +132,11 @@ class AbstractProviderTest extends \PHPUnit_Framework_TestCase
         $messageStub = $this->getMockBuilder('Huying\Sms\Message')
             ->disableOriginalConstructor()
             ->getMock();
+        $messageStub->method('toArray')
+            ->willReturn([
+                'recipients' => ['123'],
+                'content' => '132',
+            ]);
 
         $provider->send($messageStub);
     }

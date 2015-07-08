@@ -12,9 +12,15 @@ class FakeProvider extends AbstractProvider
     protected $accountSid;
     protected $authToken;
 
-    protected function getRequiredOptions()
+    protected function getRequiredOptions($key)
     {
-        return ['accountSid', 'authToken'];
+        if ($key == self::PROVIDER_OPTIONS) {
+            return ['accountSid', 'authToken'];
+        } elseif ($key == self::MESSAGE_OPTIONS) {
+            return ['recipients', 'content'];
+        } else {
+            return [];
+        }
     }
 
     protected function getUrl(Message $message)

@@ -14,14 +14,32 @@ use GuzzleHttp\Psr7\Response;
 abstract class AbstractProvider implements ProviderInterface
 {
     /**
+     * GET 请求
+     *
      * @var string
      */
     const METHOD_GET = 'GET';
 
     /**
+     * POST 请求
+     *
      * @var string
      */
     const METHOD_POST = 'POST';
+
+    /**
+     * 短信接口参数的键
+     *
+     * @var string
+     */
+    const PROVIDER_OPTIONS = '短信接口';
+
+    /**
+     * 短信参数的键
+     *
+     * @var string
+     */
+    const MESSAGE_OPTIONS = '短信';
 
     /**
      * 优先级
@@ -63,7 +81,7 @@ abstract class AbstractProvider implements ProviderInterface
      */
     public function __construct($options = [], array $collaborators = [])
     {
-        $this->assertRequiredOptions($options);
+        $this->assertRequiredOptions(static::PROVIDER_OPTIONS, $options);
 
         foreach ($options as $option => $value) {
             if (property_exists($this, $option)) {
@@ -100,23 +118,25 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * 返回短信接口必须的参数
      *
+     * @param string $key
      * @return array
      */
-    abstract protected function getRequiredOptions();
+    abstract protected function getRequiredOptions($key);
 
     /**
      * 验证是否必须的参数都存在
      *
+     * @param string $key
      * @param  array $options
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function assertRequiredOptions(array $options)
+    protected function assertRequiredOptions($key, array $options)
     {
-        $missing = array_diff_key(array_flip($this->getRequiredOptions()), $options);
+        $missing = array_diff_key(array_flip($this->getRequiredOptions($key)), $options);
         if ($missing) {
             throw new \InvalidArgumentException(
-                '参数不完整，请指定: '.implode(', ', array_keys($missing))
+                '参数不完整，请指定'.$key.'参数: '.implode(', ', array_keys($missing))
             );
         }
     }
@@ -133,6 +153,7 @@ abstract class AbstractProvider implements ProviderInterface
 
     public function send(Message $message)
     {
+        $this->assertRequiredOptions(static::MESSAGE_OPTIONS, $message->toArray());
         $protocolVersion = $this->getProtocolVersion();
         $url = $this->getUrl($message);
         $method = $this->getRequestMethod();
@@ -239,6 +260,7 @@ abstract class AbstractProvider implements ProviderInterface
      * 处理短信接口的返回结果
      *
      * @param Response $response
+     * @return array 解析过的返回内容
      * @throws ProviderException
      */
     abstract protected function handleResponse(Response $response);
