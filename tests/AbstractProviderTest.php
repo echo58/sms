@@ -110,8 +110,10 @@ class AbstractProviderTest extends \PHPUnit_Framework_TestCase
                 'recipients' => ['123'],
                 'content' => '132',
             ]);
+        $messageStub->expects($this->once())
+            ->method('setError');
 
-        $provider->send($messageStub);
+        $this->assertFalse($provider->send($messageStub));
     }
 
     /**
@@ -139,5 +141,33 @@ class AbstractProviderTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $provider->send($messageStub);
+    }
+
+    public function testSendNon200Status()
+    {
+        $mock = new MockHandler([
+            new Response(500, [], json_encode([
+                'status' => 0,
+            ])),
+        ]);
+        $handler = HandlerStack::create($mock);
+        $httpClient = new HttpClient(['handler' => $handler]);
+        $provider = new FakeProvider([
+            'accountSid' => '123',
+            'authToken' => '456',
+        ]);
+        $provider->setHttpClient($httpClient);
+        $messageStub = $this->getMockBuilder('Huying\Sms\Message')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $messageStub->method('toArray')
+            ->willReturn([
+                'recipients' => ['123'],
+                'content' => '132',
+            ]);
+        $messageStub->expects($this->once())
+            ->method('setError');
+
+        $this->assertFalse($provider->send($messageStub));
     }
 }

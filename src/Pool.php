@@ -100,16 +100,17 @@ class Pool
      */
     protected function sortProviders()
     {
-        $cmp = function (ProviderInterface $providerA, ProviderInterface $providerB) {
-            if ($providerA->getPriority() < $providerB->getPriority()) {
-                return -1;
-            } else {
-                return 1;
-            }
-        };
-
         // fix: uasort(): Array was modified by the user comparison function
-        @uasort($this->providers, $cmp);
+        $simpleProviders = [];
+        foreach ($this->providers as $name => $provider) {
+            $simpleProviders[$name] = $provider->getPriority();
+        }
+        asort($simpleProviders);
+        $providers = [];
+        foreach ($simpleProviders as $name => $priority) {
+            $providers[$name] = $this->providers[$name];
+        }
+        $this->providers = $providers;
     }
 
     /**

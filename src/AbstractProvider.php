@@ -3,8 +3,9 @@
 namespace Huying\Sms;
 
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * 短信供应商抽象类
@@ -60,7 +61,7 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * 接口回复
      *
-     * @var Response
+     * @var ResponseInterface|GuzzleException
      */
     protected $response;
 
@@ -134,7 +135,7 @@ abstract class AbstractProvider implements ProviderInterface
     protected function assertRequiredOptions($key, array $options)
     {
         $missing = array_diff_key(array_flip($this->getRequiredOptions($key)), $options);
-        if ($missing) {
+        if (!empty($missing)) {
             throw new \InvalidArgumentException(
                 '参数不完整，请指定'.$key.'参数: '.implode(', ', array_keys($missing))
             );
@@ -171,7 +172,13 @@ abstract class AbstractProvider implements ProviderInterface
         $message->setHttpRequest($request);
 
         $httpClient = $this->httpClient;
-        $response = $httpClient->send($request);
+
+        try {
+            $response = $httpClient->send($request);
+        } catch (GuzzleException $error) {
+            $response = $error;
+        }
+
         try {
             $parsedResponse = $this->handleResponse($response);
             $message->setResponse($parsedResponse);
@@ -259,11 +266,11 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * 处理短信接口的返回结果
      *
-     * @param Response $response
+     * @param ResponseInterface|GuzzleException $response
      * @return array 解析过的返回内容
      * @throws ProviderException
      */
-    abstract protected function handleResponse(Response $response);
+    abstract protected function handleResponse($response);
 
     /**
      * 解析 JSON 格式的字符串

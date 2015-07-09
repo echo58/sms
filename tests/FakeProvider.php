@@ -2,7 +2,7 @@
 
 namespace Huying\Sms\Test;
 
-use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Exception\GuzzleException;
 use Huying\Sms\AbstractProvider;
 use Huying\Sms\Message;
 use Huying\Sms\ProviderException;
@@ -45,10 +45,13 @@ class FakeProvider extends AbstractProvider
         return 'test';
     }
 
-    protected function handleResponse(Response $response)
+    protected function handleResponse($response)
     {
-        $jsonParsed = static::parseJson($response->getBody());
+        if ($response instanceof GuzzleException) {
+            throw new ProviderException('test', 2, []);
+        }
 
+        $jsonParsed = static::parseJson($response->getBody());
         if (isset($jsonParsed['status']) and $jsonParsed['status'] == 0) {
             return $jsonParsed;
         } else {

@@ -87,7 +87,7 @@ class Message implements \ArrayAccess
     /**
      * 调用服务商接口返回的内容
      *
-     * @var Response
+     * @var Response|\GuzzleHttp\Exception\GuzzleException
      */
     protected $httpResponse;
 
@@ -182,7 +182,7 @@ class Message implements \ArrayAccess
      * 转换接收者格式
      *
      * @param string|string[] $recipients
-     * @return array
+     * @return string[]
      * @throws \InvalidArgumentException
      */
     public static function formatRecipient($recipients)
@@ -405,7 +405,7 @@ class Message implements \ArrayAccess
     /**
      * 获取短信接口的 HTTP 回复
      *
-     * @return Response
+     * @return Response|\GuzzleHttp\Exception\GuzzleException
      */
     public function getHttpResponse()
     {
@@ -415,9 +415,9 @@ class Message implements \ArrayAccess
     /**
      * 设置短信接口的 HTTP 回复
      *
-     * @param Response $httpResponse
+     * @param Response|\GuzzleHttp\Exception\GuzzleException $httpResponse
      */
-    public function setHttpResponse(Response $httpResponse)
+    public function setHttpResponse($httpResponse)
     {
         $this->httpResponse = $httpResponse;
     }

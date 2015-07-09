@@ -30,7 +30,7 @@ $ composer require huying/sms
 ### 实例化短信平台类
 
 ```php
-$provider = new Huying\Sms\<ProvioderName>([
+$provider = new Huying\Sms\<ProvioderName>\Provider([
     'accountSid' => 'xxxxx',
     'authToken' => 'xxxxx',
     'appId' => 'xxxxxx',
@@ -102,5 +102,5 @@ $pool = Pool::create([$provider1, $provider2]);
 [link-scrutinizer]: https://scrutinizer-ci.com/g/echo58/sms/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/echo58/sms
 [link-downloads]: https://packagist.org/packages/huying/sms
-[link-author]: https://github.com/:author_username
+[link-author]: https://github.com/xjchengo
 [link-contributors]: ../../contributors
