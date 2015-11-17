@@ -17,7 +17,7 @@ class Message implements \ArrayAccess
      *
      * @var string[]
      */
-    protected $recipients;
+    protected $recipients = [];
 
     /**
      * 发送短信的号码
